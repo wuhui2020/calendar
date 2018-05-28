@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="../css/reset.css" type="text/css" />
+	<link rel="stylesheet" href="../css/calendar.css" type="text/css" />
+	<script src="../js/jquery-1.11.3.min.js"></script>
+	<script src="../js/calendar.js"></script>
+</head>
+<body>
+	<div class="calendar-warp">
+		<div class="calendar-head clearfix">
+
+			<div class="calendar-year">
+				<span class="calendar-showYear" value=""></span>
+				<ul name="" class="calendar-selectYear"></ul>
+			</div>
+
+			<ul class="calendar-month clearfix">
+				<li class="calendar-month-li calendar-nextMonth"></li>
+				<li class="calendar-month-number">
+					<span class="calendar-showMonth" value=""></span>
+					<ul class="calendar-selectMonth clearfix">
+						
+					</ul>
+				</li>
+				<li class="calendar-month-li calendar-prevMonth"></li>
+			</ul>
+
+			<div class="calendar-timeDiv clearfix">
+				<ul class="calendar-time clearfix">
+					<li class="calendar-liTime calendar-Hour clearfix">
+						<div>
+							<span></span>
+							<input type="text" class="calendar-inputHour" name='h'/>
+						</div>
+						<i>:</i>
+					</li>
+					<li class="calendar-liTime calendar-Minute  clearfix">
+						<div>
+							<span></span>
+							<input type="text" class="calendar-inputMinute" name='m'/>
+						</div>
+						<i>:</i>	
+					</li>
+					<li class="calendar-liTime calendar-Second  clearfix">
+						<div>
+							<span></span>
+							<input type="text" class="calendar-inputSecond" name='s'/>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<span class="calendar-alertMessage"></span>
+			<span class="calendar-back">返回今天</span>
+
+		</div>
+
+		<ul class="calendar-week clearfix">
+			<li class="calendar-week-color">日</li>
+			<li>一</li>
+			<li>二</li>
+			<li>三</li>
+			<li>四</li>
+			<li>五</li>
+			<li class="calendar-week-color">六</li>
+		</ul>
+
+		<ul class="calendar-everyData clearfix">
+			
+		</ul>
+	</div>
+</body>
+</html>

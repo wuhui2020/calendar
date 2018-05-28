@@ -53,12 +53,11 @@
 	font-family: "微软雅黑";
 	cursor: pointer;
 }
-.calendar-selectYear li:hover{
+.calendar-selectYear li.calendar-checked{
 	background-color:#dff2f4;
 	line-height: 25px;
 	font-size: 14px;
 	font-weight: bold;
-	font-family:  "微软雅黑";
 }
 .calendar-month,.calendar-timeDiv{
 	width: 100px;
@@ -77,10 +76,10 @@
 	height: 25px;
 	cursor: pointer;
 }
-.calendar-nextMonth{
+.calendar-prevMonth{
 	background: url(../image/left.png) no-repeat center;
 }
-.calendar-prevMonth{
+.calendar-nextMonth{
 	background: url(../image/right.png) no-repeat center;
 }
 .calendar-month-number{
@@ -114,12 +113,11 @@
 	font-size: 12px;
 	font-family: "微软雅黑";
 }
-.calendar-selectMonth li:hover{
+.calendar-selectMonth li.calendar-checked{
 	background-color:#dff2f4;
 	line-height: 25px;
 	font-size: 14px;
 	font-weight: bold;
-	font-family:  "微软雅黑";
 }
 .calendar-time{
 	width: 100px;
@@ -200,20 +198,47 @@
 	color: #424242;
 	text-align: center; 
 }
-.calendar-week li.calendar-week-color{
+.calendar-week li.calendar-weekColor{
 	color:#fd5b5b;
 }
-.calendar-everyData{
+.calendar-content{
+	width: 476px;
+	position: relative;
+}
+.calendar-selectPrevMonth,.calendar-selectNextMonth{
+	width:40px;
+	height: 40px;
+	display: block;
+	color: #ccc;
+	position: absolute;
+	left:5px;
+	top:84px;
+	border-radius: 50%;
+	cursor: pointer;
+	opacity: 0.5;
+}
+.calendar-selectPrevMonth{
+	background:#dff2f4 url(../image/prev_img.png) no-repeat right center;
+	background-size: 70%;
+}
+.calendar-selectNextMonth{
+	background:#dff2f4 url(../image/next_img.png) no-repeat left center;
+	background-size: 70%;
+}
+.calendar-selectNextMonth{
+	left: 431px;
+}
+.calendar-content_day{
 	width: 476px;
 }
-.calendar-everyData li{
+.calendar-content_day li{
 	width:68px;
 	display: inline-block;
 	float: left;
 	border-bottom:1px solid #e6e6e6;
 	text-align: center;  
 }
-.calendar-everyData li span{
+.calendar-content_day li span{
 	width:51px;
 	display: inline-block;
 	line-height: 51px;
@@ -231,7 +256,7 @@
 	border-bottom:1px solid #e6e6e6;
 	text-align: center;*/
 }
-.calendar-everyData span.calendar-everyData-add-span{
+.calendar-content_day span.calendar-everyDay-on{
 	width:51px;
 	display: inline-block;
 	line-height: 51px;

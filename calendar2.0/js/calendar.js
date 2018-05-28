@@ -1,7 +1,7 @@
 $(function(){
-	var other = "N";
+	var other = "N";//Y时间选择正点时间
 	var calendar_Time;
-		
+	var isClick = "Y";//Y控制超过当前年月日不让选择,N不控制
     var NOW_TIME = new Date();
     var NOW_YEAR = NOW_TIME.getFullYear();//当前年
     var NOW_MONTH = NOW_TIME.getMonth()+1; //当前月
@@ -22,18 +22,34 @@ $(function(){
 
     //显示前后十年
     yearHtml = "";
-    for(var i =NOW_YEAR-10;i<NOW_YEAR+10;i++){
+    for(var i = NOW_YEAR - 10;i <= NOW_YEAR + 10;i++){
     	yearHtml += '<li value="'+i+'">'+i+'年</li>'
     }
     $(".calendar-selectYear").html(yearHtml);
-
+    $(".calendar-selectYear").find("li").hover(function(){
+        $(this).addClass("calendar-checked");
+    },function(){
+        if($(this).attr("value") == $(".calendar-showYear").attr("value")){
+            $(this).addClass("calendar-checked");
+        }else{
+           $(this).removeClass("calendar-checked"); 
+        }
+    })
     //显示月
     var monthHtml = "";
-    for(var i = 1;i < 13;i++){
+    for(var i = 1;i <= 12;i++){
     	monthHtml += '<li value="'+i+'">'+i+'</li>'
     }
-    $(".calendar-selectMonth").html(monthHtml)
-
+    $(".calendar-selectMonth").html(monthHtml);
+    $(".calendar-selectMonth").find("li").hover(function(){
+        $(this).addClass("calendar-checked");
+    },function(){
+        if($(this).attr("value") == $(".calendar-showMonth").attr("value")){
+            $(this).addClass("calendar-checked");
+        }else{
+           $(this).removeClass("calendar-checked"); 
+        }
+    })
 	//---获取时分秒
     function SetTime(){
     	var nowTime = new Date();
@@ -52,10 +68,11 @@ $(function(){
     	$(this).find("input").css({display:"block"}).focus().val(spanVal);
     	clearInterval(calendar_Time);
     	inputBlur($(this),spanVal);
+        yearOrMonthHidden();
     })
-
+    
     function inputBlur(_this,spanVal){
-    	_this.find("input").off("blur")
+    	_this.find("input").off("blur");
     	_this.find("input").on("blur",function(e){
     		var _thisPar = $(this).parents("li.calendar-liTime");
     		if($(this).val() != ""){
@@ -71,7 +88,6 @@ $(function(){
 				    	$(this).parents(".calendar-head").find(".calendar-alertMessage").html("小于0大于24").css({color:"red",display:"block"});
 				    	$(this).focus();
 			    	}
-			    	
     			}else if($(this).attr("name") == "m" || $(this).attr("name") == "s"){
     				if($(this).val()>= 0 && $(this).val()< 60 ){
 			    		_thisPar.find("span").css({display:"block"});
@@ -85,7 +101,6 @@ $(function(){
 				    	$(this).focus();
 			    	}
     			}
-    			
     		}else{
     			_thisPar.find("span").css({display:"block"});
 		    	_thisPar.find("input").css({display:"none"});
@@ -107,29 +122,49 @@ $(function(){
     	othertime = "00:00:00";
     	$(".calendar-otherSelect").on("change",function(){
     		othertime = $(".calendar-otherSelect").val();
+            yearOrMonthHidden();
     	})
     }
 		
     //选择年份月份
     function yearOrMonth(){
     	//年份选择框隐藏出现
-	    $(".calendar-showYear").on("click",function(){
+	    $(".calendar-showYear").off("click").on("click",function(){
+            var _this = $(this);
+            $(".calendar-selectMonth").css({display:"none"});
+            console.log($(".calendar-selectYear").css("display"))
 	    	if($(".calendar-selectYear").css("display") == "none"){
-	    		$(".calendar-selectYear").css({display:"block"});
+                $(".calendar-selectYear").css({display:"block"});
+                $(".calendar-selectYear").find("li").each(function(){
+                    if(_this.attr("value") == $(this).attr("value")){
+                        $(this).addClass("calendar-checked").siblings("li").removeClass("calendar-checked");
+                        return false;
+                    }
+                })
+	    		
+                // console.log($(".calendar-selectYear").height())
+                // $(".calendar-selectYear").scrollTop(100)
+                // console.log($(".calendar-selectYear").scrollTop())
 	    	}else{
 	    		$(".calendar-selectYear").css({display:"none"});
 	    	}
 	    })
 	    //月份选择框隐藏出现
 	    $(".calendar-showMonth").on("click",function(){
+            var _this = $(this);
+            $(".calendar-selectYear").css({display:"none"});
 	    	if($(".calendar-selectMonth").css("display") == "none"){
+                $(".calendar-selectMonth").find("li").each(function(){
+                    if(_this.attr("value") == $(this).attr("value")){
+                        $(this).addClass("calendar-checked").siblings("li").removeClass("calendar-checked");
+                        return false;
+                    }
+                })
 	    		$(".calendar-selectMonth").css({display:"block"});
 	    	}else{
 	    		$(".calendar-selectMonth").css({display:"none"});
 	    	}
 	    })
-		
-		
 	    //选择年份值
 	    $(".calendar-selectYear li").each(function(){
 	    	$(this).click(function(){
@@ -137,9 +172,8 @@ $(function(){
 	    		$(".calendar-selectYear").css({display:"none"});
 	    		var setMonth = $(".calendar-showMonth").attr("value");
 	    		$(".calendar-everyData").html("");
-	    		getYearMonth($(this).val(),setMonth)
+	    		getYearMonth($(this).val(),setMonth);
 	    	})
-
 	    })
 	    //选择月份值
 	    $(".calendar-selectMonth li").each(function(){
@@ -147,33 +181,77 @@ $(function(){
 	    		$(".calendar-showMonth").html($(this).val() + "月").attr("value",$(this).val());
 	    		$(".calendar-selectMonth").css({display:"none"});
 	    		var setYear = $(".calendar-showYear").attr("value");
-	    		getYearMonth(setYear,$(this).val())
-	    		
+	    		getYearMonth(setYear,$(this).val());
 	    	})
 	    })
 		
-	    //加减月份
+	    //点击加减月份
 	    $(".calendar-nextMonth").on("click",function(){
-	    	var years = $(".calendar-showYear").attr("value") * 1;
-	    	var months = $(".calendar-showMonth").attr("value") * 1;
-	    	if(months > 1){
-	    		$(".calendar-showMonth").html(months - 1 +"月").attr("value",months - 1);
-	    		$(".calendar-selectMonth").css({display:"none"});
-	    		getYearMonth(years,months - 1)
-	    	}
+            clickNextMonth();
 	    })
 	    $(".calendar-prevMonth").on("click",function(){
-	     	var years = $(".calendar-showYear").attr("value") * 1;
-	    	var months = $(".calendar-showMonth").attr("value") * 1;
-	    	if(months < 12){
-	    		$(".calendar-showMonth").html(months + 1 +"月").attr("value",months + 1);
-	    		$(".calendar-selectMonth").css({display:"none"});
-	    		getYearMonth(years,months + 1)
-	    	}
+            clickPrevMonth();
 	    })
+        
 	}
 	yearOrMonth();
-		    
+    //点击上一个月
+    $(".calendar-selectPrevMonth").on("click",function(){
+        clickPrevMonth();
+    })
+    $(".calendar-selectPrevMonth").hover(function(){
+        $(this).css({opacity:"1"});
+    },function(){
+        $(this).css({opacity:"0.5"});
+    })
+    //点击下一个月
+    $(".calendar-selectNextMonth").on("click",function(){
+        clickNextMonth();
+    })
+    $(".calendar-selectNextMonth").hover(function(){
+        $(this).css({opacity:"1"});
+    },function(){
+        $(this).css({opacity:"0.5"});
+    })
+    //上一个月
+	function clickPrevMonth(){
+        $(".calendar-selectYear").css({display:"none"});
+        var years = $(".calendar-showYear").attr("value") * 1;
+        var months = $(".calendar-showMonth").attr("value") * 1;
+        if(years >= NOW_YEAR - 10){
+            if(months > 1){
+                $(".calendar-showMonth").html(months - 1 +"月").attr("value",months - 1);
+                getYearMonth(years,months - 1);
+            }else if(months == 1 && years != (NOW_YEAR - 10)){
+                $(".calendar-showYear").html(years - 1+"年").attr("value",years -1);
+                $(".calendar-showMonth").html(12 +"月").attr("value",12);
+                getYearMonth(years - 1 ,12);
+            }
+            $(".calendar-selectMonth").css({display:"none"});
+        }
+    }
+    //下一个月
+    function clickNextMonth(){
+        $(".calendar-selectYear").css({display:"none"});
+        var years = $(".calendar-showYear").attr("value") * 1;
+        var months = $(".calendar-showMonth").attr("value") * 1;
+        if(years <= NOW_YEAR+10){
+            if(months < 12){
+                $(".calendar-showMonth").html(months + 1 +"月").attr("value",months + 1);
+                getYearMonth(years,months + 1);
+            }else if(months == 12 && years != (NOW_YEAR + 10)){
+                $(".calendar-showYear").html(years + 1+"年").attr("value",years + 1);
+                $(".calendar-showMonth").html(1 +"月").attr("value",1);
+                getYearMonth(years + 1 ,1);
+            }
+            $(".calendar-selectMonth").css({display:"none"});
+        }
+    }
+    function yearOrMonthHidden(){
+        $(".calendar-selectYear").css({display:"none"});
+        $(".calendar-selectMonth").css({display:"none"});
+    }
+
     function monthData(){
     	if(NOW_MONTH == 1){
     		preYear = (NOW_YEAR * 1) - 1;
@@ -194,26 +272,30 @@ $(function(){
 
     	//获取当前月
     	var html = "";
+        var Class = "";
     	for( i=1; i <= MONTH_ALL_DAY;i++){
+            if(isClick == "Y"){
+               Class = i > NOW_DAY?"calendar-isClick":""; 
+            }
 	    	var everyWeek = new Date(NOW_YEAR,NOW_MONTH-1,i).getDay();
-	    	 html += '<li>'
-	    		+ 	'<span name="'+everyWeek+'">'+i+'</span>'
+	    	 html += '<li class="'+Class+'">'
+	    		+ 	'<span class="calendar-everyDay" week="'+everyWeek+'">'+i+'</span>'
 	    		+ 	'<input type="hidden" class="" value="'+NOW_YEAR+'-'+(NOW_MONTH<10?"0"+NOW_MONTH:""+NOW_MONTH)+'-'+(i<10?"0"+i:""+i)+'"/>'
 	    		+ '</li>'
     	}
-    	$(".calendar-everyData").html(html);
+    	$(".calendar-content_day").html(html);
     	//获取上一个月补齐前面天
     	for(j = PREV_MONTH_ALL_DAY; j > PREV_MONTH_ALL_DAY-FIRST_WEEK;j--){
 			$('<li class="calendar-on">'
-			+ 	'<span class="calendar-everyData-add-span">'+j+'</span>'
+			+ 	'<span class="calendar-everyDay-on" >'+j+'</span>'
 			+ 	'<input type="hidden" value="'+preYear+'-'+(preMonth<10?"0"+preMonth:""+preMonth)+'-'+(j<10?"0"+j:""+j)+'"/>'
-			+ '</li>').prependTo(".calendar-everyData");
+			+ '</li>').prependTo(".calendar-content_day");
 	    }
 	    //获取下一个月补齐后面几天
 	    for(m = 1; m <= 6 - END_WEEK; m++){
-	    	$(".calendar-everyData").append('<li class="calendar-on">'
-			+ 	'<span class="calendar-everyData-add-span">'+(m)+'</span>'
-			+ 	'<input type="hidden" value="'+nextYear+'-'+(preMonth<10?"0"+preMonth:""+preMonth)+'-'+(m<10?"0"+m:""+m)+'"/>'
+	    	$(".calendar-content_day").append('<li class="calendar-on">'
+			+ 	'<span class="calendar-everyDay-on" >'+(m)+'</span>'
+			+ 	'<input type="hidden" value="'+nextYear+'-'+(nextMonth<10?"0"+nextMonth:""+nextMonth)+'-'+(m<10?"0"+m:""+m)+'"/>'
 			+ '</li>');
 	    }
 
@@ -241,35 +323,37 @@ $(function(){
     		nextYear = year;
     		nextMonth = (month * 1) + 1;
     	}
-    	
     	var day = new Date(year,month,0); 
     	var getMonthDay = day.getDate();
     	var prevDay = new Date(year,month-1,0);//上一个月
     	var getPrevMonthDay = prevDay.getDate();//上一个月多少天
     	var getWeek = new Date(year,month-1,1).getDay();//选择年月的第一天是星期几
     	var endWeek = new Date(year,month-1,getMonthDay).getDay();//选择年月的最后一天是星期几
-    	
+    	var Class = "";
     	var html = "";
     	for( i = 1; i <= getMonthDay; i++){
 	    	var geteveryWeek = new Date(year,month-1,i).getDay()
-	    	html+= '<li>'
-	    		+ 	'<span name="'+geteveryWeek+'">'+i+'</span>'
+            if(isClick == "Y"){
+               Class = (month == NOW_MONTH && year == NOW_YEAR && i > NOW_DAY) || (month > NOW_MONTH && year >= NOW_YEAR)?"calendar-isClick":"";
+            }
+	    	html+= '<li class="'+Class+'">'
+	    		+ 	'<span class="calendar-everyDay" week="'+geteveryWeek+'">'+i+'</span>'
 	    		+ 	'<input type="hidden" class="" value="'+year+'-'+(month<10?"0"+month:month)+'-'+(i<10?"0"+i:i)+'"/>'
 	    		+ '</li>'
     	}
-    	$(".calendar-everyData").html(html);
+    	$(".calendar-content_day").html(html);
 
     	// console.log(getPrevMonthDay)
     	for(j = getPrevMonthDay; j >= getPrevMonthDay-getWeek+1 ; j--){
 			$('<li class="calendar-on">'
-			+ 	'<span class="calendar-everyData-add-span">'+j+'</span>'
+			+ 	'<span class="calendar-everyDay-on" >'+j+'</span>'
 			+ 	'<input type="hidden" class="" value="'+preYear+'-'+(preMonth<10?"0"+preMonth:preMonth)+'-'+(j<10?"0"+j:j)+'"/>'
-			+ '</li>').prependTo(".calendar-everyData");
+			+ '</li>').prependTo(".calendar-content_day");
 	    }
 
 	    for(m = 1; m <= 6 - endWeek; m++){
-	    	$(".calendar-everyData").append('<li class="calendar-on">'
-			+ 	'<span class="calendar-everyData-add-span">'+m+'</span>'
+	    	$(".calendar-content_day").append('<li class="calendar-on">'
+			+ 	'<span class="calendar-everyDay-on" >'+m+'</span>'
 			+ 	'<input type="hidden" value="'+nextYear+'-'+(nextMonth<10?"0"+nextMonth:nextMonth)+'-'+(m<10?"0"+m:m)+'"/>'
 			+ '</li>');
 	    }
@@ -280,61 +364,44 @@ $(function(){
     $(".calendar-back").click(function(){
     	$(".calendar-showYear").html(NOW_YEAR + "年").attr("value",NOW_YEAR);
     	$(".calendar-showMonth").html(NOW_MONTH + "月").attr("value",NOW_MONTH);
-    	getYearMonth(NOW_YEAR,NOW_MONTH);
-    	calendar_Time = setInterval(SetTime,1000);
+        getYearMonth(NOW_YEAR,NOW_MONTH);
+        calendar_Time = setInterval(SetTime,1000);
     	changeBgColor();
+        yearOrMonthHidden();
     })
 
 
     //改变选中的背景颜色
     function changeBgColor(){
-    	$("span[name = '0']").css({color:"#fd5b5b"});
-    	$("span[name = '6']").css({color:"#fd5b5b"});
-    	$(".calendar-everyData").find("li").each(function(){
-    		$(this).click(function(){
-    			//返回选择的值
-    			// if(calendar.para.resource && calendar.para.resource != ""){
+    	$("span[week = '0']").css({color:"#fd5b5b"});
+    	$("span[week = '6']").css({color:"#fd5b5b"});
+    	$(".calendar-content_day").find("li").each(function(){
+    		$(this).on("click",function(){
+                yearOrMonthHidden();
+                if($(this).hasClass("calendar-isClick")){
+                    return false;
+                }
+                
+			    var times = $('.calendar-time-hour span').text();
+			    var minutes = $('.calendar-time-minute span').text();
+			    var miao = $('.calendar-time-second span').text();
 
-			    	var times = $('.calendar-time-hour span').text();
-
-			    	var minutes = $('.calendar-time-minute span').text();
-
-			        var miao = $('.calendar-time-second span').text();
-
-    			// 	if(calendar.para.addtime == "Y" && calendar.para.onlyone == "S"){
-    			// 		calendar.para.resource.val($(this).find("input").val() + " 00:00:00");
-    			// 	}else if(calendar.para.addtime == "Y" && calendar.para.onlyone == "E"){
-    			// 		calendar.para.resource.val($(this).find("input").val() + " 23:59:59");
-    			// 	}else if(calendar.para.addtime == "Y"){
-    			// 		calendar.para.resource.val($(this).find("input").val() + " " +times+":"+minutes+":"+miao ).focus();
-    			// 	}else if(calendar.para.other == "Y"){
-    			// 		calendar.para.resource.val($(this).find("input").val() + " " +othertime ).focus();
-    			// 	}else{
-    			// 		calendar.para.resource.val($(this).find("input").val()).focus();
-    			// 	}
-    			// 	if(calendar.para.backstrfunc && calendar.para.backstrfunc != null && calendar.para.backstrfunc != "" && typeof(calendar.para.backstrfunc) == 'function'){
-    			// 		var obj = {};
-    			// 		obj.date = $(this).find("input").val();
-    			// 		obj.times = times;
-    			// 		obj.minutes = minutes;
-    			// 		obj.miao = miao;
-    			// 		calendar.para.backstrfunc(obj);
-    			// 	}
-    			// 	calendar.para.assisdiv.css({display:"none"});
-    			// 	calendar.para.assisdiv.find(".platformmng-relaceModel").html("");
-    				
-    			// }
-    			$(".calendar-everyData").find("li span").css({backgroundColor:"#fff",color:"#424242",fontSize:"14px"});
-    			$(".calendar-everyData span.calendar-everyData-add-span").css({color:"#ccc"});
-    			$(".calendar-everyData").find("span[name='0']").css({color:"#fd5b5b"});
-    			$(".calendar-everyData").find("span[name='6']").css({color:"#fd5b5b"});
+    			
+    			$(".calendar-content_day").find("li span").css({backgroundColor:"#fff",color:"#424242",fontSize:"14px"});
+    			$(".calendar-content_day span.calendar-everyDay-on").css({color:"#ccc"});
+    			$(".calendar-content_day").find("span[week='0']").css({color:"#fd5b5b"});
+    			$(".calendar-content_day").find("span[week='6']").css({color:"#fd5b5b"});
     			$(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
-    			clearInterval(calendar_Time);
+    			// clearInterval(calendar_Time);
     		})
     		//判断当前天背景变色
     		if($(this).find("input").val() == (""+NOW_YEAR)+'-'+(NOW_MONTH<10?"0"+NOW_MONTH:""+NOW_MONTH)+'-'+(NOW_DAY<10?"0"+NOW_DAY:""+NOW_DAY)){
     			$(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
-    		}
+                return false;
+    		}else if($(this).find("span").text() == NOW_DAY){
+                $(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
+                return false;
+            }
     		
     	})
     }

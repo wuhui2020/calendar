@@ -142,9 +142,6 @@ $(function(){
                     }
                 })
 	    		
-                // console.log($(".calendar-selectYear").height())
-                // $(".calendar-selectYear").scrollTop(100)
-                // console.log($(".calendar-selectYear").scrollTop())
 	    	}else{
 	    		$(".calendar-selectYear").css({display:"none"});
 	    	}
@@ -275,6 +272,7 @@ $(function(){
         var Class = "";
     	for( i=1; i <= MONTH_ALL_DAY;i++){
             if(isClick == "Y"){
+
                Class = i > NOW_DAY?"calendar-isClick":""; 
             }
 	    	var everyWeek = new Date(NOW_YEAR,NOW_MONTH-1,i).getDay();
@@ -386,27 +384,30 @@ $(function(){
 			    var minutes = $('.calendar-time-minute span').text();
 			    var miao = $('.calendar-time-second span').text();
 
-    			
-    			$(".calendar-content_day").find("li span").css({backgroundColor:"#fff",color:"#424242",fontSize:"14px"});
-    			$(".calendar-content_day span.calendar-everyDay-on").css({color:"#ccc"});
-    			$(".calendar-content_day").find("span[week='0']").css({color:"#fd5b5b"});
-    			$(".calendar-content_day").find("span[week='6']").css({color:"#fd5b5b"});
+    			defaultsStatus();
     			$(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
     			// clearInterval(calendar_Time);
     		})
     		//判断当前天背景变色
-    		if($(this).find("input").val() == (""+NOW_YEAR)+'-'+(NOW_MONTH<10?"0"+NOW_MONTH:""+NOW_MONTH)+'-'+(NOW_DAY<10?"0"+NOW_DAY:""+NOW_DAY)){
-    			$(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
-                return false;
-    		}else if($(this).find("span").text() == NOW_DAY){
-                $(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
-                return false;
+            if($(this).find("span").text() == NOW_DAY){
+                if($(this).find("input").val() == (""+NOW_YEAR)+'-'+(NOW_MONTH<10?"0"+NOW_MONTH:""+NOW_MONTH)+'-'+(NOW_DAY<10?"0"+NOW_DAY:""+NOW_DAY)){
+                    defaultsStatus();
+                    $(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"});
+                    return false;
+                }else{
+                    defaultsStatus();
+                   $(this).find("span").css({backgroundColor:"#fd5b5b",color:"#fff",fontSize:"16px"}); 
+                }
             }
-    		
     	})
     }
     changeBgColor();
-    
+    function defaultsStatus(){
+        $(".calendar-content_day").find("li span").css({backgroundColor:"#fff",color:"#424242",fontSize:"14px"});
+        $(".calendar-content_day span.calendar-everyDay-on").css({color:"#ccc"});
+        $(".calendar-content_day").find("span[week='0']").css({color:"#fd5b5b"});
+        $(".calendar-content_day").find("span[week='6']").css({color:"#fd5b5b"});
+    }
 
 })
    

@@ -43,6 +43,7 @@
 	top: 25px;
 	overflow: auto;
 	overflow-x:hidden;
+	z-index: 1;
 }
 .calendar-selectYear li{
 	width: 100px;
@@ -105,6 +106,7 @@
 	top:25px;
 	background-color: #fff;
 	display: none;
+	z-index: 1;
 }
 .calendar-selectMonth li{
 	width:100%;

@@ -1,6 +1,6 @@
 $(function(){
 	var other = "N";//Y时间选择正点时间
-	var calendar_Time;
+	var calendar_Time;//定时器
 	var isClick = "Y";//Y控制超过当前年月日不让选择,N不控制
     var NOW_TIME = new Date();
     var NOW_YEAR = NOW_TIME.getFullYear();//当前年
